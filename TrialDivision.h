@@ -14,7 +14,8 @@ using namespace std;
 class TrialDivision {
     public:
         TrialDivision();
-        void doTrialDivision(vector<mpz_class> *result, bool *fail,mpz_class N);
+        void doTrialDivision_Random(vector<mpz_class> *result, bool *fail,mpz_class N);
+        void doTrialDivision_Basic(vector<mpz_class> *result, bool *fail,mpz_class N);
 };
 
 

@@ -25,5 +25,6 @@ class pollard {
         void dopollardp_1(vector<mpz_class> *result, bool *fail,mpz_class N);
 };
 
+mpz_class LCM(mpz_class n);
 
 #endif //FACTORING_POLLARD_H

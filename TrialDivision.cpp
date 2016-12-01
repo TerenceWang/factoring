@@ -3,13 +3,14 @@
 //
 
 #include "TrialDivision.h"
+#include "time.h"
 
 using namespace std;
 TrialDivision::TrialDivision(){
 
 }
 
-void TrialDivision::doTrialDivision(vector <mpz_class> *result, bool *fail, mpz_class N) {
+void TrialDivision::doTrialDivision_Random(vector <mpz_class> *result, bool *fail, mpz_class N) {
     stack<mpz_class> tempnumbers;
     tempnumbers.push(N);
     int timecnt = 0;
@@ -42,5 +43,38 @@ void TrialDivision::doTrialDivision(vector <mpz_class> *result, bool *fail, mpz_
             timecnt = 200;
     }
     if (timecnt == 200)
+        fail[0]=true;
+}
+
+void TrialDivision::doTrialDivision_Basic(vector <mpz_class> *result, bool *fail, mpz_class N) {
+    stack<mpz_class> tempnumbers;
+    tempnumbers.push(N);
+    bool flag = true;
+
+    while(!tempnumbers.empty()){
+        mpz_class top = tempnumbers.top();
+        tempnumbers.pop();
+        if (mpz_probab_prime_p(top.get_mpz_t(),10))
+        {
+            result[0].push_back(top);
+            continue;
+        }
+        mpz_class pf, i;
+        for (i = (mpz_class)2; i < (sqrt(top) + 1) && i < 650000; ++i)
+            if (top % i == 0)
+            {
+                pf = i;
+                break;
+            }
+        if (i == 650000)
+        {
+            flag = false;
+            break;
+        }
+        tempnumbers.push(pf);
+        tempnumbers.push(top / pf);
+
+    }
+    if (!flag)
         fail[0]=true;
 }

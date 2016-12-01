@@ -4,6 +4,7 @@
 
 #include "pollard.h"
 #include "factoring.h"
+#include "time.h"
 
 pollard::pollard(){
 
@@ -125,7 +126,7 @@ void pollard::dopollardrho_brent(vector <mpz_class> *result, bool *fail, mpz_cla
         }
     }
 }
-mpz_class	LCM(mpz_class n) {
+mpz_class LCM(mpz_class n) {
     if (n < 3)
         return (mpz_class)2;
     else
@@ -134,26 +135,27 @@ mpz_class	LCM(mpz_class n) {
 
 mpz_class pollard::pollardp_1(mpz_class n, mpz_class a, mpz_class K){
 
-    mpz_class d, k, t;
+    mpz_class d,k,t;
     int iteration = 0;
 
     k = LCM(K);
-    for (int cnt = 0; cnt < 50000; cnt++,iteration++){
-        if (gcd(a, n) > 1)
-            return gcd(a, n);
+    for (int cnt=0; cnt<20000; cnt++, iteration++){
+
+        if (gcd(a,n) > 1)
+            return gcd(a,n);
 
         mpz_class temp;
-        mpz_powm(temp.get_mpz_t(), a.get_mpz_t(), k.get_mpz_t(), n.get_mpz_t());
+        mpz_powm(temp.get_mpz_t(),a.get_mpz_t(),k.get_mpz_t(),n.get_mpz_t());
         t = temp % n;
         d = gcd(t-1, n);
-        if ( (1<d) && (d<n) )
+        if ((1<d) && (d<n))
             return d;
-        if ( (0==(K%60)) || (d==n && a+1<n ) || iteration>80){
-            k = LCM(++K);
-            a %= n;
-            iteration = 0;
+        if ((d==n&&a+1<n) || iteration>50){
+            k=LCM(++K);
+            a%=n;
+            iteration=0;
         }
-        else if ( d==1 ) {
+        else if (d==1) {
             a++;
         }
         else
@@ -165,18 +167,19 @@ mpz_class pollard::pollardp_1(mpz_class n, mpz_class a, mpz_class K){
 
 void pollard::dopollardp_1(vector<mpz_class> *result, bool *fail, mpz_class n){
 
-    mpz_class pf, a, k;
-    a = 2;
-    k = 2;
+    mpz_class pf,a,k;
+    a=2;
+    k=2;
+    //cout << LCM(1000) << endl;
 
     while(!mpz_probab_prime_p(n.get_mpz_t(),10)){
-        pf = pollardp_1(n, a, k);
-        if (pf == 0) {
-            fail[0] = true;
+        pf=pollardp_1(n, a, k);
+        if (pf<0){
+            fail[0]=true;
             break;
         }
         result[0].push_back(pf);
-        n /= pf;
+        n/=pf;
     }
     result[0].push_back(n);
 
